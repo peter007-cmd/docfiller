@@ -2,14 +2,21 @@ const { PDFDocument } = require('pdf-lib');
 const { readFile, writeFile } = require('fs/promises');
 const express = require('express');
 const cors = require("cors");
+const path = require('path');
 const app = express();
 app.use(express.json());
+app.use(express.static('server'));
 app.use(
   cors({
     credentials: true,
     origin: "http://localhost:3000",
   })
 );
+app.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, '/', filename);
+  res.sendFile(filePath);
+});
 
 app.post('/fill', async (req, res) => {
   const { name1, name2, name3, name4, name5, name6, name7, name8,name9,name10,name11,name12,name13,name14 } = req.body;
@@ -46,21 +53,12 @@ async function createPdf(input, output, data) {
 
     const form = pdfDoc.getForm();
 
-    // Set text fields based on the data passed in
-    form.getTextField('1').setText(data.name1);
-    form.getTextField('2').setText(data.name2);
-    form.getTextField('3').setText(data.name3);
-    form.getTextField('4').setText(data.name4);
-    form.getTextField('5').setText(data.name5);
-    form.getTextField('6').setText(data.name6);
-    form.getTextField('7').setText(data.name7);
-    form.getTextField('8').setText(data.name8);
-    form.getTextField('9').setText(data.name9);
-    form.getTextField('10').setText(data.name10);
-    form.getTextField('11').setText(data.name11);
-    form.getTextField('12').setText(data.name12);
-    form.getTextField('13').setText(data.name13);
-    form.getTextField('14').setText(data.name14);
+    const nf = 14;
+
+for (let i = 1; i <= nf; i++) {
+  form.getTextField(i.toString()).setText(data['name' + i]);
+}
+
 
 
     const pdfBytes = await pdfDoc.save();

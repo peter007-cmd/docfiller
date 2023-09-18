@@ -3,6 +3,8 @@ import axios from 'axios'
 import React from 'react'
 import Fields from "../components/Fields";
 const Form = () => {
+  const [click,setClick] = useState(false)
+
     const [data,setData] = useState({
         name1:'',
         name2:'',
@@ -33,6 +35,23 @@ const Form = () => {
         }
     
       }
+      
+        const getDownload = () => {
+          
+          const downloadUrl = 'http://localhost:4000/download/output.pdf';
+        
+        
+          const downloadLink = document.createElement('a');
+          downloadLink.href = downloadUrl;
+          downloadLink.download = 'LEGAL.pdf';
+        
+          
+          downloadLink.click();
+        
+          
+          document.body.removeChild(downloadLink);
+        
+      }
     
   return (
     <div className="App">
@@ -41,10 +60,15 @@ const Form = () => {
     <button onClick={(e)=>{
         alert("Submitted")
         fillUser(e)
+        setClick(true)
         console.log(data)
 
     }}>Submit</button>
+    {click && (
+        <button onClick={getDownload}>Download</button>
+      )}
     </div>
+    
   )
 }
 
